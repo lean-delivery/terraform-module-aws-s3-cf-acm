@@ -23,9 +23,17 @@ module "aws-cert" {
   tags = "${var.acm_tags}"
 }
 
+resource "null_resource" "dummy" {
+  # untill https://github.com/terraform-providers/terraform-provider-aws/issues/8945 will be resolved
+  provisioner "local-exec" {
+    command = "sleep 100 && echo ${module.aws-cert.certificate_arn}"
+  }
+}
+
 data "aws_acm_certificate" "this" {
-  domain   = "${module.aws-cert.certificate_domain}"
-  statuses = ["ISSUED", "PENDING_VALIDATION"]
+  depends_on = ["null_resource.dummy"]
+  domain     = "${module.aws-cert.certificate_domain}"
+  statuses   = ["ISSUED", "PENDING_VALIDATION"]
 }
 
 module "cdn" {
@@ -53,6 +61,7 @@ module "cdn" {
   use_regional_s3_endpoint     = "${var.use_regional_s3_endpoint}"
   web_acl_id                   = "${var.web_acl_id}"
   origin_force_destroy         = "true"
+
   providers = {
     aws = "aws.acm_provider"
   }
