@@ -14,7 +14,7 @@ variable "name" {
   type        = "string"
 }
 
-variable "hosted_zone_name" {
+variable "parent_zone_name" {
   description = "Name of the hosted zone to contain this record (or specify parent_zone_id)"
   type        = "string"
 }
@@ -23,6 +23,12 @@ variable "alternative_domains_count" {
   description = "Count of Domian name alternatives for ACM certificate"
   type        = "string"
   default     = "0"
+}
+
+variable "aliases" {
+  type        = "list"
+  description = "List of FQDN's - Used to set the Alternate Domain Names (CNAMEs) setting on Cloudfront"
+  default     = []
 }
 
 variable "domain" {

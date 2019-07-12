@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 data "aws_route53_zone" "selected" {
-  name = "${var.hosted_zone_name}"
+  name = "${var.parent_zone_name}"
 }
 
 module "aws-cert" {
@@ -34,15 +34,16 @@ data "aws_acm_certificate" "this" {
   depends_on = ["null_resource.dummy"]
   domain     = "${module.aws-cert.certificate_domain}"
   statuses   = ["ISSUED", "PENDING_VALIDATION"]
+  provider = "aws.acm_provider"
 }
 
 module "cdn" {
-  source                       = "git::https://github.com/cloudposse/terraform-aws-cloudfront-s3-cdn.git?ref=master"
+  source                       = "git::https://github.com/cloudposse/terraform-aws-cloudfront-s3-cdn.git?ref=cfa99645ac8a949b67d32d302fdf4f1996d685e9"
   namespace                    = "${var.namespace}"
   stage                        = "${var.stage}"
   name                         = "${var.name}"
   aliases                      = "${concat(list(var.domain), var.alternative_domains)}"
-  parent_zone_name             = "${var.hosted_zone_name}"
+  parent_zone_name             = "${var.parent_zone_name}"
   acm_certificate_arn          = "${data.aws_acm_certificate.this.arn}"
   default_root_object          = "${var.default_root_object}"
   default_ttl                  = "${var.default_ttl}"
@@ -55,14 +56,10 @@ module "cdn" {
   log_standard_transition_days = "${var.log_standard_transition_days}"
   max_ttl                      = "${var.max_ttl}"
   min_ttl                      = "${var.min_ttl}"
-  origin_bucket                = "${var.origin_bucket}"
   price_class                  = "${var.price_class}"
   tags                         = "${var.tags}"
   use_regional_s3_endpoint     = "${var.use_regional_s3_endpoint}"
   web_acl_id                   = "${var.web_acl_id}"
   origin_force_destroy         = "true"
 
-  providers = {
-    aws = "aws.acm_provider"
-  }
 }
