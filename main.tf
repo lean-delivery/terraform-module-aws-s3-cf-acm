@@ -38,7 +38,7 @@ data "aws_acm_certificate" "this" {
 }
 
 module "cdn" {
-  source                       = "git::https://github.com/cloudposse/terraform-aws-cloudfront-s3-cdn.git?ref=cfa99645ac8a949b67d32d302fdf4f1996d685e9"
+  source                       = "git::https://github.com/cloudposse/terraform-aws-cloudfront-s3-cdn.git?ref=0.11.0"
   namespace                    = "${var.namespace}"
   stage                        = "${var.stage}"
   name                         = "${var.name}"
