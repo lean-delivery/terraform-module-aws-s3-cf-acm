@@ -1,6 +1,6 @@
 provider "aws" {
-  alias  = "acm_provider"
   region = "us-east-1"
+  alias  = "acm_provider"
 }
 
 data "aws_route53_zone" "selected" {
@@ -8,33 +8,23 @@ data "aws_route53_zone" "selected" {
 }
 
 module "aws-cert" {
-  source = "github.com/lean-delivery/tf-module-aws-acm"
+  source = "terraform-aws-modules/acm/aws"
+  version = "~> v2.0"
 
-  providers = {
-    aws = "aws.acm_provider"
-  }
-
-  domain  = "${var.domain}"
+  domain_name  = "${var.domain}"
   zone_id = "${data.aws_route53_zone.selected.zone_id}"
 
-  alternative_domains_count = "${var.alternative_domains_count}"
-  alternative_domains       = "${var.alternative_domains}"
-
+  subject_alternative_names = "${var.alternative_names}"
+  
   tags = "${var.acm_tags}"
 }
 
-resource "null_resource" "dummy" {
-  # untill https://github.com/terraform-providers/terraform-provider-aws/issues/8945 will be resolved
-  provisioner "local-exec" {
-    command = "sleep 100 && echo ${module.aws-cert.certificate_arn}"
-  }
-}
-
 data "aws_acm_certificate" "this" {
-  depends_on = ["null_resource.dummy"]
-  domain     = "${module.aws-cert.certificate_domain}"
+  domain     = "${var.domain}"
   statuses   = ["ISSUED", "PENDING_VALIDATION"]
   provider = "aws.acm_provider"
+  
+  depends_on = [module.aws-cert]
 }
 
 module "cdn" {
@@ -42,7 +32,7 @@ module "cdn" {
   namespace                    = "${var.namespace}"
   stage                        = "${var.stage}"
   name                         = "${var.name}"
-  aliases                      = "${concat(list(var.domain), var.alternative_domains)}"
+  aliases                      = "${concat(list(var.domain), var.alternative_names)}"
   parent_zone_name             = "${var.parent_zone_name}"
   acm_certificate_arn          = "${data.aws_acm_certificate.this.arn}"
   default_root_object          = "${var.default_root_object}"

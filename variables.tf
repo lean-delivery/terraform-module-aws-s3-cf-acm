@@ -19,12 +19,6 @@ variable "parent_zone_name" {
   type        = "string"
 }
 
-variable "alternative_domains_count" {
-  description = "Count of Domian name alternatives for ACM certificate"
-  type        = "string"
-  default     = "0"
-}
-
 variable "aliases" {
   type        = "list"
   description = "List of FQDN's - Used to set the Alternate Domain Names (CNAMEs) setting on Cloudfront"
@@ -36,7 +30,7 @@ variable "domain" {
   type        = "string"
 }
 
-variable "alternative_domains" {
+variable "alternative_names" {
   description = "Domian name alternatives for ACM certificate"
   type        = "list"
   default     = []
