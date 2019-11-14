@@ -8,22 +8,22 @@ data "aws_route53_zone" "selected" {
 }
 
 module "aws-cert" {
-  source = "terraform-aws-modules/acm/aws"
+  source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
-  domain_name  = "${var.domain}"
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
+  domain_name = "${var.domain}"
+  zone_id     = "${data.aws_route53_zone.selected.zone_id}"
 
   subject_alternative_names = "${var.alternative_names}"
-  
+
   tags = "${var.acm_tags}"
 }
 
 data "aws_acm_certificate" "this" {
-  domain     = "${var.domain}"
-  statuses   = ["ISSUED", "PENDING_VALIDATION"]
+  domain   = "${var.domain}"
+  statuses = ["ISSUED", "PENDING_VALIDATION"]
   provider = "aws.acm_provider"
-  
+
   depends_on = [module.aws-cert]
 }
 
