@@ -1,74 +1,74 @@
 variable "namespace" {
   description = "Namespace (forming bucket name)"
-  type        = "string"
+  type        = string
 }
 
 variable "stage" {
   description = "Stage of environment (e.g. `dev` or `prod`) (forming bucket name)"
-  type        = "string"
+  type        = string
   default     = "dev"
 }
 
 variable "name" {
   description = "Name of static content (forming bucket name)"
-  type        = "string"
+  type        = string
 }
 
 variable "parent_zone_name" {
   description = "Name of the hosted zone to contain this record (or specify parent_zone_id)"
-  type        = "string"
+  type        = string
 }
 
 variable "aliases" {
-  type        = "list"
+  type        = list(string)
   description = "List of FQDN's - Used to set the Alternate Domain Names (CNAMEs) setting on Cloudfront"
   default     = []
 }
 
 variable "domain" {
   description = "A domain name for which certificate will be created"
-  type        = "string"
+  type        = string
 }
 
 variable "alternative_names" {
   description = "Domian name alternatives for ACM certificate"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "acm_tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)"
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)"
 }
 
 variable "enabled" {
   default     = "true"
-  type        = "string"
+  type        = string
   description = "Select Enabled if you want CloudFront to begin processing requests as soon as the distribution is created, or select Disabled if you do not want CloudFront to begin processing requests after the distribution is created."
 }
 
 variable "acm_certificate_arn" {
   description = "Existing ACM Certificate ARN"
-  type        = "string"
+  type        = string
   default     = ""
 }
 
 variable "use_regional_s3_endpoint" {
-  type        = "string"
+  type        = string
   description = "When set to 'true' the s3 origin_bucket will use the regional endpoint address instead of the global endpoint address"
   default     = "false"
 }
 
 variable "origin_bucket" {
   default     = ""
-  type        = "string"
+  type        = string
   description = "Name of S3 bucket"
 }
 
@@ -138,13 +138,14 @@ variable "parent_zone_id" {
 }
 
 variable "lambda_function_association" {
-  type        = "list"
+  type        = list(string)
   default     = []
   description = "A config block that triggers a lambda function with specific actions"
 }
 
 variable "web_acl_id" {
-  type        = "string"
+  type        = string
   default     = ""
   description = "ID of the AWS WAF web ACL that is associated with the distribution"
 }
+
