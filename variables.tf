@@ -49,8 +49,8 @@ variable "tags" {
 }
 
 variable "enabled" {
-  default     = "true"
-  type        = string
+  default     = true
+  type        = bool
   description = "Select Enabled if you want CloudFront to begin processing requests as soon as the distribution is created, or select Disabled if you do not want CloudFront to begin processing requests after the distribution is created."
 }
 
@@ -61,9 +61,9 @@ variable "acm_certificate_arn" {
 }
 
 variable "use_regional_s3_endpoint" {
-  type        = string
+  type        = bool
   description = "When set to 'true' the s3 origin_bucket will use the regional endpoint address instead of the global endpoint address"
-  default     = "false"
+  default     = false
 }
 
 variable "origin_bucket" {
@@ -138,7 +138,11 @@ variable "parent_zone_id" {
 }
 
 variable "lambda_function_association" {
-  type        = list(string)
+  type        = list(object({
+    event_type   = string
+    include_body = bool
+    lambda_arn   = string
+  }))
   default     = []
   description = "A config block that triggers a lambda function with specific actions"
 }
